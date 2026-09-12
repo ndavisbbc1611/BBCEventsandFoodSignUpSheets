@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign-Up Page Admin</title>
+<style>
+  :root {
+    --bg: #F5F7FC;
+    --ink: #1A1D2E;
+    --blue: #1428D6;
+    --blue-dark: #0E1C9E;
+    --green: #4FCB1E;
+    --red: #D6303E;
+    --line: #DCE1F2;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    margin: 0;
+    padding: 24px 16px 80px;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 24px; color: var(--blue-dark); margin-bottom: 4px; }
+  .lead { color: #666; font-size: 14px; margin-bottom: 24px; }
+
+  .section {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .section h2 {
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--blue-dark);
+    margin-bottom: 14px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    margin-top: 12px;
+  }
+  label:first-of-type { margin-top: 0; }
+
+  input[type=text], input[type=password], input[type=url], select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: inherit;
+  }
+
+  .hint { font-size: 12px; color: #888; margin-top: 4px; }
+
+  button {
+    font-size: 15px;
+    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:disabled { background: #A9B4EF; cursor: not-allowed; }
+  .btn-secondary { background: #EAEEFA; color: var(--blue-dark); }
+
+  .event-card {
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--blue);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .event-card h3 { font-size: 14px; color: var(--blue-dark); margin-bottom: 4px; }
+
+  .status {
+    margin-top: 16px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    display: none;
+  }
+  .status.show { display: block; }
+  .status.ok { background: #EAF9E6; color: #276B1A; }
+  .status.err { background: #FCEAEA; color: var(--red); }
+  .status.pending { background: #EAEEFA; color: var(--blue-dark); }
+
+  details { margin-bottom: 20px; }
+  details summary { cursor: pointer; font-weight: 600; color: var(--blue-dark); font-size: 14px; }
+  details ol { margin: 10px 0 0 20px; font-size: 13px; line-height: 1.6; color: #444; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Sign-Up Page Admin</h1>
+  <p class="lead">Update the buttons on the tablet's sign-up menu. Changes here update the live page directly on GitHub.</p>
+
+  <details>
+    <summary>First time here? How to get a GitHub token</summary>
+    <ol>
+      <li>Go to github.com and log in, then go to Settings → Developer settings → Personal access tokens → Fine-grained tokens.</li>
+      <li>Click "Generate new token." Give it a name like "signup-admin."</li>
+      <li>Under "Repository access," choose "Only select repositories" and pick this repository.</li>
+      <li>Under "Permissions," find "Contents" and set it to "Read and write."</li>
+      <li>Click "Generate token" and copy it immediately — GitHub only shows it once.</li>
+      <li>Paste it into the "GitHub Token" field below. Keep it private, like a password.</li>
+    </ol>
+  </details>
+
+  <div class="section">
+    <h2>Connect to your repository</h2>
+    <label>GitHub Username</label>
+    <input type="text" id="ghOwner" placeholder="e.g. janesmith">
+
+    <label>Repository Name</label>
+    <input type="text" id="ghRepo" placeholder="e.g. church-signup">
+
+    <label>GitHub Token</label>
+    <input type="password" id="ghToken" placeholder="paste your token here">
+    <p class="hint">Not saved anywhere — you'll paste this in each time you visit.</p>
+
+    <div style="margin-top:16px;">
+      <button class="btn-secondary" id="loadBtn">Load Current Sign-Up Page</button>
+    </div>
+    <div class="status" id="loadStatus"></div>
+  </div>
+
+  <div class="section" id="eventsSection" style="display:none;">
+    <h2>Sign-Up Items</h2>
+    <label>How many items do people need to choose from?</label>
+    <select id="eventCount">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+
+    <div id="eventFields" style="margin-top:20px;"></div>
+
+    <button class="btn-primary" id="saveBtn" style="width:100%; margin-top:8px;">Save Changes</button>
+    <div class="status" id="saveStatus"></div>
+  </div>
+</div>
+
+<script>
+  let currentSha = null;
+  let currentHtml = null;
+
+  const els = {
+    owner: document.getElementById('ghOwner'),
+    repo: document.getElementById('ghRepo'),
+    token: document.getElementById('ghToken'),
+    loadBtn: document.getElementById('loadBtn'),
+    loadStatus: document.getElementById('loadStatus'),
+    eventsSection: document.getElementById('eventsSection'),
+    eventCount: document.getElementById('eventCount'),
+    eventFields: document.getElementById('eventFields'),
+    saveBtn: document.getElementById('saveBtn'),
+    saveStatus: document.getElementById('saveStatus'),
+  };
+
+  function showStatus(el, msg, type) {
+    el.textContent = msg;
+    el.className = 'status show ' + type;
+  }
+
+  function utf8ToBase64(str) {
+    return btoa(unescape(encodeURIComponent(str)));
+  }
+  function base64ToUtf8(str) {
+    return decodeURIComponent(escape(atob(str.replace(/\n/g, ''))));
+  }
+
+  function apiHeaders() {
+    return {
+      'Authorization': 'Bearer ' + els.token.value.trim(),
+      'Accept': 'application/vnd.github+json'
+    };
+  }
+
+  function renderEventFields(count, existing) {
+    els.eventFields.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+      const ev = existing[i] || { title: '', description: '', link: '' };
+      const card = document.createElement('div');
+      card.className = 'event-card';
+      card.innerHTML = `
+        <h3>Item ${i + 1}</h3>
+        <label>Title</label>
+        <input type="text" class="ev-title" value="${escapeAttr(ev.title)}" placeholder="e.g. Meal Sign-Up">
+        <label>Description</label>
+        <input type="text" class="ev-desc" value="${escapeAttr(ev.description)}" placeholder="Short line describing this item">
+        <label>Link</label>
+        <input type="url" class="ev-link" value="${escapeAttr(ev.link)}" placeholder="https://...">
+      `;
+      els.eventFields.appendChild(card);
+    }
+  }
+
+  function escapeAttr(str) {
+    return (str || '').replace(/"/g, '&quot;');
+  }
+
+  function collectEvents() {
+    const titles = els.eventFields.querySelectorAll('.ev-title');
+    const descs = els.eventFields.querySelectorAll('.ev-desc');
+    const links = els.eventFields.querySelectorAll('.ev-link');
+    const events = [];
+    for (let i = 0; i < titles.length; i++) {
+      events.push({
+        title: titles[i].value.trim(),
+        description: descs[i].value.trim(),
+        link: links[i].value.trim()
+      });
+    }
+    return events;
+  }
+
+  els.eventCount.addEventListener('change', () => {
+    const count = parseInt(els.eventCount.value, 10);
+    const existing = collectEvents();
+    renderEventFields(count, existing);
+  });
+
+  els.loadBtn.addEventListener('click', async () => {
+    const owner = els.owner.value.trim();
+    const repo = els.repo.value.trim();
+    if (!owner || !repo || !els.token.value.trim()) {
+      showStatus(els.loadStatus, 'Please fill in username, repository, and token.', 'err');
+      return;
+    }
+    showStatus(els.loadStatus, 'Loading current page...', 'pending');
+    els.loadBtn.disabled = true;
+
+    try {
+      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/index.html`, {
+        headers: apiHeaders()
+      });
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.message || ('GitHub returned ' + res.status));
+      }
+      const data = await res.json();
+      currentSha = data.sha;
+      currentHtml = base64ToUtf8(data.content);
+
+      const match = currentHtml.match(/<script id="site-data" type="application\/json">([\s\S]*?)<\/script>/);
+      if (!match) {
+        throw new Error('Could not find the sign-up data inside index.html. Make sure you are using the version with the "site-data" block.');
+      }
+      const parsed = JSON.parse(match[1]);
+      const events = parsed.events || [];
+      const count = Math.min(Math.max(events.length, 1), 5);
+
+      els.eventCount.value = String(count);
+      renderEventFields(count, events);
+      els.eventsSection.style.display = 'block';
+      showStatus(els.loadStatus, 'Loaded! Edit the items below, then save.', 'ok');
+    } catch (err) {
+      showStatus(els.loadStatus, 'Error: ' + err.message, 'err');
+    } finally {
+      els.loadBtn.disabled = false;
+    }
+  });
+
+  els.saveBtn.addEventListener('click', async () => {
+    const owner = els.owner.value.trim();
+    const repo = els.repo.value.trim();
+    const events = collectEvents();
+
+    for (const ev of events) {
+      if (!ev.title || !ev.link) {
+        showStatus(els.saveStatus, 'Every item needs at least a title and a link.', 'err');
+        return;
+      }
+    }
+
+    if (!currentHtml || !currentSha) {
+      showStatus(els.saveStatus, 'Load the current page first before saving.', 'err');
+      return;
+    }
+
+    showStatus(els.saveStatus, 'Saving to GitHub...', 'pending');
+    els.saveBtn.disabled = true;
+
+    try {
+      const newDataBlock = JSON.stringify({ events }, null, 2);
+      const newHtml = currentHtml.replace(
+        /(<script id="site-data" type="application\/json">)[\s\S]*?(<\/script>)/,
+        `$1\n${newDataBlock}\n$2`
+      );
+
+      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/index.html`, {
+        method: 'PUT',
+        headers: { ...apiHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: 'Update sign-up items via admin page',
+          content: utf8ToBase64(newHtml),
+          sha: currentSha
+        })
+      });
+
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.message || ('GitHub returned ' + res.status));
+      }
+
+      const result = await res.json();
+      currentSha = result.content.sha;
+      currentHtml = newHtml;
+
+      showStatus(els.saveStatus, 'Saved! It may take a minute to show up on the tablet. Reload the tablet\'s browser to see the update.', 'ok');
+    } catch (err) {
+      showStatus(els.saveStatus, 'Error: ' + err.message, 'err');
+    } finally {
+      els.saveBtn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
