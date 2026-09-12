@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Bible Baptist Church</title>
+<style>
+  :root {
+    --bg: #F5F7FC;
+    --ink: #1A1D2E;
+    --blue: #1428D6;
+    --blue-dark: #0E1C9E;
+    --green: #4FCB1E;
+    --line: #DCE1F2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 32px 20px;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 620px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .logo-slot {
+    width: 108px;
+    height: 108px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid var(--line);
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+    padding: 16px;
+  }
+  .logo-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    font-size: 30px;
+    text-align: center;
+    line-height: 1.25;
+    color: var(--blue-dark);
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 16px;
+    color: #7A6F5F;
+    margin-bottom: 40px;
+  }
+
+  .menu {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    width: 100%;
+    padding: 22px 22px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-left: 5px solid var(--blue);
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .card:active {
+    transform: scale(0.98);
+    box-shadow: none;
+  }
+
+  .icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #EAEEFA;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .icon svg { width: 22px; height: 22px; stroke: var(--blue-dark); }
+
+  .card-text { flex: 1; min-width: 0; }
+
+  .card-title {
+    font-size: 19px;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+
+  .card-desc {
+    font-size: 14px;
+    color: #7A6F5F;
+    line-height: 1.4;
+  }
+
+  .chevron {
+    flex-shrink: 0;
+    color: var(--green);
+    font-size: 22px;
+  }
+
+  footer {
+    margin-top: 44px;
+    text-align: center;
+    font-size: 13px;
+    color: #A89B85;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="logo-slot">
+    <img src="data:image/jpeg;base64,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" alt="Bible Baptist Church logo">
+  </div>
+
+  <h1>Bible Baptist Church</h1>
+  <p class="subtitle">Tap on the item below you would like to sign up for</p>
+
+  <div class="menu" id="menu"></div>
+
+  <footer>Tap the ⌂ button at the top to return here anytime.</footer>
+</div>
+
+<script id="site-data" type="application/json">
+{
+  "events": [
+    { "title": "Pay for Wednesday Night Meal", "description": "Register and pay for this week's meal", "link": "https://biblebaptistchurch-tn-37.subspla.sh/7294sx8" },
+    { "title": "Sign-Up Form 1", "description": "Tap to fill out this form", "link": "https://forms.gle/FxPCNWpprMFZ528W7" },
+    { "title": "Sign-Up Form 2", "description": "Tap to fill out this form", "link": "https://forms.gle/dChDenGga4NXRRvj6" }
+  ]
+}
+</script>
+
+<script>
+  const data = JSON.parse(document.getElementById('site-data').textContent);
+  const menu = document.getElementById('menu');
+
+  data.events.forEach((ev, i) => {
+    const a = document.createElement('a');
+    a.className = 'card';
+    a.href = ev.link;
+
+    const icon = document.createElement('span');
+    icon.className = 'icon';
+    icon.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="8" y1="13" x2="16" y2="13"></line>
+        <line x1="8" y1="17" x2="16" y2="17"></line>
+      </svg>
+    `;
+
+    const textWrap = document.createElement('span');
+    textWrap.className = 'card-text';
+
+    const title = document.createElement('div');
+    title.className = 'card-title';
+    title.textContent = ev.title;
+
+    const desc = document.createElement('div');
+    desc.className = 'card-desc';
+    desc.textContent = ev.description;
+
+    textWrap.appendChild(title);
+    textWrap.appendChild(desc);
+
+    const chevron = document.createElement('span');
+    chevron.className = 'chevron';
+    chevron.textContent = '\u203A';
+
+    a.appendChild(icon);
+    a.appendChild(textWrap);
+    a.appendChild(chevron);
+    menu.appendChild(a);
+  });
+</script>
+
+</body>
+</html>
