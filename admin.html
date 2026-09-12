@@ -240,7 +240,7 @@
     els.loadBtn.disabled = true;
 
     try {
-      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/index.html`, {
+      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/testindex.html`, {
         headers: apiHeaders()
       });
       if (!res.ok) {
@@ -297,7 +297,7 @@
         `$1\n${newDataBlock}\n$2`
       );
 
-      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/index.html`, {
+      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/testindex.html`, {
         method: 'PUT',
         headers: { ...apiHeaders(), 'Content-Type': 'application/json' },
         body: JSON.stringify({
