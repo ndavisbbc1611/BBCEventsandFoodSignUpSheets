@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Announcements</title>
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      font-family: sans-serif;
+      color: #ccc;
+    }
+    img { max-width: 100%; height: auto; display: block; }
+  </style>
+</head>
+<body>
+  <img id="slide" alt="Announcements">
+  <script>
+    // Always load the newest image, so phones never show a cached old one
+    var img = document.getElementById('slide');
+    img.onerror = function () {
+      document.body.innerHTML = '<p>Announcements are not available right now.</p>';
+    };
+    img.src = 'announcements.png?v=' + Date.now();
+  </script>
+</body>
+</html>
