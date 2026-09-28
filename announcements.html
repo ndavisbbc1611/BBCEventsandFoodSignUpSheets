@@ -20,36 +20,26 @@
       color: #ccc;
     }
     img { max-width: 100%; height: auto; display: block; }
-    .toolbar { display: flex; gap: 12px; }
-    .toolbar a, .toolbar button {
+    .toolbar { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .toolbar a {
       background: #2d6cdf;
       color: #fff;
-      border: 0;
       border-radius: 6px;
       padding: 10px 18px;
       font-size: 16px;
       text-decoration: none;
-      cursor: pointer;
     }
-    .toolbar a { background: #444; }
-
-    /* Print: just the slide, filling one landscape page, no buttons */
-    @page { size: landscape; margin: 0.25in; }
-    @media print {
-      body { background: #fff; display: block; min-height: 0; padding: 0; }
-      .toolbar { display: none; }
-      img { width: 100%; max-height: 100vh; object-fit: contain; }
-    }
+    .toolbar a.secondary { background: #444; }
   </style>
 </head>
 <body>
   <img id="slide" alt="Announcements">
   <div class="toolbar" id="toolbar">
-    <button onclick="window.print()">Print</button>
-    <a id="download" href="announcements.png" download="announcements.png">Download image</a>
+    <a id="pdf" href="announcements.pdf" target="_blank" rel="noopener">Open PDF to print</a>
+    <a id="download" class="secondary" href="announcements.png" download="announcements.png">Download image</a>
   </div>
   <script>
-    // Always load the newest image, so phones never show a cached old one
+    // Always load the newest files, so phones never show a cached old version
     var v = Date.now();
     var img = document.getElementById('slide');
     img.onerror = function () {
@@ -57,6 +47,7 @@
       img.outerHTML = '<p>Announcements are not available right now.</p>';
     };
     img.src = 'announcements.png?v=' + v;
+    document.getElementById('pdf').href = 'announcements.pdf?v=' + v;
     document.getElementById('download').href = 'announcements.png?v=' + v;
   </script>
 </body>
