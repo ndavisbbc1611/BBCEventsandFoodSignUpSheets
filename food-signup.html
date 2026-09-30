@@ -31,7 +31,7 @@
       background: #fff;
       display: block;
     }
-    #status { text-align: center; }
+    #msg { text-align: center; }
     .toolbar { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
     .toolbar a {
       background: #2d6cdf;
@@ -45,7 +45,7 @@
   </style>
 </head>
 <body>
-  <div id="status">Loading PDF…</div>
+  <div id="msg">Loading PDF…</div>
   <div id="viewer"></div>
   <div class="toolbar">
     <a id="openpdf" href="#" target="_blank" rel="noopener">Open PDF to print</a>
@@ -55,40 +55,43 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
     var HUBSPOT_PDF_URL = "https://ndavisbbc1611.github.io/BBCEventsandFoodSignUpSheets/food-signup.pdf";
-
     var url = HUBSPOT_PDF_URL + "?v=" + Date.now();
+
+    var msgEl = document.getElementById('msg');
+    var viewerEl = document.getElementById('viewer');
     document.getElementById('openpdf').href = url;
     document.getElementById('download').href = url;
 
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    if (typeof pdfjsLib === 'undefined') {
+      msgEl.textContent = "Couldn't load the PDF viewer. Use the buttons below.";
+    } else {
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
-    var viewer = document.getElementById('viewer');
-    var status = document.getElementById('status');
-
-    pdfjsLib.getDocument(url).promise.then(function (pdf) {
-      status.style.display = 'none';
-      var chain = Promise.resolve();
-      for (let n = 1; n <= pdf.numPages; n++) {
-        chain = chain.then(function () {
-          return pdf.getPage(n).then(function (page) {
-            var scale = 2; // render sharp; CSS scales it down to fit the screen
-            var viewport = page.getViewport({ scale: scale });
-            var canvas = document.createElement('canvas');
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-            viewer.appendChild(canvas);
-            return page.render({
-              canvasContext: canvas.getContext('2d'),
-              viewport: viewport
-            }).promise;
+      pdfjsLib.getDocument(url).promise.then(function (pdf) {
+        msgEl.style.display = 'none';
+        var chain = Promise.resolve();
+        for (let n = 1; n <= pdf.numPages; n++) {
+          chain = chain.then(function () {
+            return pdf.getPage(n).then(function (page) {
+              var viewport = page.getViewport({ scale: 2 });
+              var canvas = document.createElement('canvas');
+              canvas.width = viewport.width;
+              canvas.height = viewport.height;
+              viewerEl.appendChild(canvas);
+              return page.render({
+                canvasContext: canvas.getContext('2d'),
+                viewport: viewport
+              }).promise;
+            });
           });
-        });
-      }
-    }).catch(function (err) {
-      status.textContent = "Couldn't load the PDF. Use the buttons below.";
-      console.error(err);
-    });
+        }
+      }).catch(function (err) {
+        msgEl.style.display = '';
+        msgEl.textContent = "Couldn't load the PDF. Use the buttons below.";
+        console.error(err);
+      });
+    }
   </script>
 </body>
 </html>
