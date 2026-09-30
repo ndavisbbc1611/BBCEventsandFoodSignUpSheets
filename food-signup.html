@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Food Sign-Up</title>
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 12px;
+      box-sizing: border-box;
+      font-family: sans-serif;
+      color: #ccc;
+    }
+    embed { width: 100%; max-width: 900px; height: 80vh; border: 0; }
+    .toolbar { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .toolbar a {
+      background: #2d6cdf;
+      color: #fff;
+      border-radius: 6px;
+      padding: 10px 18px;
+      font-size: 16px;
+      text-decoration: none;
+    }
+    .toolbar a.secondary { background: #444; }
+  </style>
+</head>
+<body>
+  <embed id="pdf" type="application/pdf">
+  <div class="toolbar">
+    <a id="openpdf" href="#" target="_blank" rel="noopener">Open PDF to print</a>
+    <a id="download" class="secondary" href="#">Download PDF</a>
+  </div>
+  <script>
+    // === PASTE YOUR HUBSPOT PDF LINK BELOW (from the "HubSpot file created:" console line) ===
+    var HUBSPOT_PDF_URL = "PASTE_HUBSPOT_PDF_URL_HERE";
+
+    var v = Date.now();
+    var url = HUBSPOT_PDF_URL + "?v=" + v;
+    document.getElementById('pdf').src = url;
+    document.getElementById('openpdf').href = url;
+    document.getElementById('download').href = url;
+  </script>
+</body>
+</html>
